@@ -1,3 +1,4 @@
+import { InfiniteData } from "@tanstack/react-query";
 import { Control, FieldError, FieldErrors, UseFormHandleSubmit, UseFormRegister, UseFormRegisterReturn } from "react-hook-form";
 import { DebouncedState } from "usehooks-ts";
 
@@ -62,7 +63,7 @@ export interface UsePokemonsPropsInterface {
 }
 
 export interface SelectPropsInterface {
-    pokemons: PokeResultsInterface[] | [] | undefined;
+    pokemons: InfiniteData<PokeResultsInterface[] | [], unknown> | undefined;
     label: string;
     name: "firstName" | "lastName" | "Member1" | "Member2" | "Member3" | "Member4"
     control?: Control<DefaultUseFormValues, any>;
@@ -75,17 +76,15 @@ export interface SelectPropsInterface {
     selectValue?: string
     setCountOffset: React.Dispatch<React.SetStateAction<number>>
     offset: number
-    prevData: React.MutableRefObject<PokeResultsInterface[] | []>
 }
 
 export interface UseFiltredPokemons {
-    pokemons: PokeResultsInterface[] | [] | undefined;
+    pokemons: InfiniteData<PokeResultsInterface[] | [], unknown> | undefined;
     debouncedValue: string;
-    prevData: React.MutableRefObject<PokeResultsInterface[] | []>
 }
 
 export interface DropDownMenuPropsInterface {
-    pokemons: PokeResultsInterface[] | [] | undefined;
+    pokemons: PokeResultsInterface[] | undefined;
     choosePokemon: (pokemon: string) => void;
     setDebounceValue:  DebouncedState<(value: string) => void>;
     setCountOffset: React.Dispatch<React.SetStateAction<number>>
@@ -98,12 +97,11 @@ export interface DropDownMenuItemPropsInterface {
 }
 
 export interface SelectsPropsInterface {
-    data: PokeResultsInterface[] | [] | undefined;
+    data: InfiniteData<PokeResultsInterface[] | [], unknown> | undefined
     control: Control<DefaultUseFormValues, any>;
     errors: FieldErrors<DefaultUseFormValues>;
     setCountOffset: React.Dispatch<React.SetStateAction<number>>
     offset: number
-    prevData: React.MutableRefObject<PokeResultsInterface[] | []>
 }
 
 export interface FetchSearchPokemonReqInterface {

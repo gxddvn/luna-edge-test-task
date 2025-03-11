@@ -6,7 +6,21 @@ import { useDebounceValue } from 'usehooks-ts'
 import { useChoosePokemon, useFiltredPokemons, useSelectOnClick } from '../../hooks/hooks'
 import { useController } from 'react-hook-form'
 
-const Select = ({pokemons, label, name, control, optional = false, labelName, assistText, size, disabled, selectValue, error, setCountOffset, offset, prevData}: SelectPropsInterface) => {
+const Select = ({
+    pokemons, 
+    label, 
+    name, 
+    control, 
+    optional = false, 
+    labelName, 
+    assistText, 
+    size, 
+    disabled, 
+    selectValue, 
+    error, 
+    setCountOffset, 
+    offset,
+}: SelectPropsInterface) => {
     const [isOpen, setIsOpen] = useState(false)
     const [isError, setIsError] = useState(false)
     const [debouncedValue, setDebounceValue] = useDebounceValue('', 500)
@@ -18,7 +32,7 @@ const Select = ({pokemons, label, name, control, optional = false, labelName, as
         }, 
     }) : { field: { value: "", onChange: () => {} } };
     const choosePokemon = useChoosePokemon({setValue: onChange, setIsOpen});
-    const filtredPokemons = useFiltredPokemons({pokemons, debouncedValue, prevData});
+    const filtredPokemons = useFiltredPokemons({pokemons, debouncedValue});
     const selectOnClick = useSelectOnClick({setIsOpen, isOpen, setDebounceValue});
     useEffect(() => {
         if (value) {
@@ -26,16 +40,16 @@ const Select = ({pokemons, label, name, control, optional = false, labelName, as
         }
     }, [value])
 
-    useEffect(() => {
-        if (pokemons) {
-            prevData.current = [
-                ...prevData.current,
-                ...pokemons.filter(item => 
-                    !prevData.current.some(existingItem => existingItem.name === item.name)
-                )
-            ];
-        }
-    }, [pokemons, prevData]);
+    // useEffect(() => {
+    //     if (pokemons) {
+    //         prevData.current = [
+    //             ...prevData.current,
+    //             ...pokemons.filter(item => 
+    //                 !prevData.current.some(existingItem => existingItem.name === item.name)
+    //             )
+    //         ];
+    //     }
+    // }, [pokemons, prevData]);
     
     return (
         <div className='relative inline-block text-left mx-2 rounded-md'>
@@ -60,7 +74,13 @@ const Select = ({pokemons, label, name, control, optional = false, labelName, as
             {assistText && <span className='text-xs text-gray-500 mt-2'>{assistText}</span>}
             {isError && <span className='text-xs text-red-500 mt-2'>Please choose a pokemon</span>}
             {isOpen && (
-                <DropDownMenu pokemons={filtredPokemons} choosePokemon={choosePokemon} setDebounceValue={setDebounceValue} setCountOffset={setCountOffset} offset={offset} />
+                <DropDownMenu 
+                    pokemons={filtredPokemons} 
+                    choosePokemon={choosePokemon} 
+                    setDebounceValue={setDebounceValue} 
+                    setCountOffset={setCountOffset} 
+                    offset={offset} 
+                />
             )}
         </div>
     )
