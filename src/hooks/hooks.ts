@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { fetchPokemons, fetchSearchPokemon } from "../api"
 import { UseChoosePokemonInterface, UseFiltredPokemons, UsePokemonsPropsInterface, UseSelectOnClickInterface } from "../types/types"
 import { useSearchParams } from "react-router-dom"
@@ -11,23 +11,37 @@ export const usePokemons = ({offset}: UsePokemonsPropsInterface) => {
     })
 }
 
+export const useSearchQuery = (name: string) => {
+    return useQuery({
+        queryKey: ['pokemon', name],
+        queryFn: () => fetchSearchPokemon({name}),
+    })
+}
+
 export const useFilterParams = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const updateParams = useCallback((key: string, value: string) => {
+    const updateParams = useCallback((newValues: Record<string, string>) => {
         const newParams = new URLSearchParams(searchParams);
-        newParams.set(key, value);
+        Object.entries(newValues).forEach(([key, value]) => {
+            newParams.set(key, value);
+        });
         setSearchParams(newParams);
     }, [searchParams, setSearchParams]);
 
     return { searchParams, updateParams };
 };
 
-export const useFiltredPokemons = ({pokemons, debouncedValue}: UseFiltredPokemons) => {
+export const useFiltredPokemons = ({pokemons, debouncedValue, prevData}: UseFiltredPokemons) => {
     return useMemo(() => {
-        return debouncedValue
-            ? pokemons?.filter((item) => item.name.toLowerCase().includes(debouncedValue.toLowerCase()))
-            : pokemons;
+        if (debouncedValue) {
+            return debouncedValue
+                ? pokemons?.filter((item) => item.name.toLowerCase().includes(debouncedValue.toLowerCase()))
+                : pokemons;
+        }
+        else {
+            return prevData.current
+        }
     }, [debouncedValue, pokemons]);
 }
 

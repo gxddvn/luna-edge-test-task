@@ -1,38 +1,58 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { FormSubmitProps } from '../types/types';
-import { useFilterParams, usePokemons } from '../hooks/hooks';
+import { FormSubmitProps, PokeResultsInterface } from '../types/types';
+import { useFilterParams } from '../hooks/hooks';
 import FormComponent from '../components/FormComponent';
+import Modal from '../components/Modal';
+import ModalMembersComponent from '../components/Modal/ModalMembersComponent';
 
 const TrainerForm = () => {
-    const [countOffset, setCountOffset] = React.useState(0)
-    const { data, isLoading, isError } = usePokemons({offset: countOffset})
     const { searchParams, updateParams } = useFilterParams();
+    const [isOpen, setIsOpen] = useState(false)
+    
     const {
-        register, 
+        register,
+        control, 
         handleSubmit, 
-        formState: { errors, isValid },
-        reset
+        formState: { errors, isValid }
     } = useForm({ 
         defaultValues: {
-            firstName: "",
-            lastName: "",
-            oneMember: "",
-            twoMember: "",
-            threeMember: "",
-            fourMember: "",
+            firstName: searchParams.get('firstName') || "",
+            lastName: searchParams.get('lastName') || "",
+            Member1: searchParams.get('Member1') || "",
+            Member2: searchParams.get('Member2') || "",
+            Member3: searchParams.get('Member3') || "",
+            Member4: searchParams.get('Member4') || "",
         }, 
         mode: "onBlur",
     });
 
     const onSubmit = useCallback((data: FormSubmitProps) => {
-
-    }, [])
+        updateParams({
+            firstName: data.firstName,
+            lastName: data.lastName,
+            Member1: data.Member1,
+            Member2: data.Member2,
+            Member3: data.Member3,
+            Member4: data.Member4
+        });
+        setIsOpen(!isOpen)
+    }, [updateParams])
 
     return (
         <div className='flex flex-col items-center justify-center h-screen bg-gray-100'>
             <h1 className='text-5xl font-bold text-blue-700 mb-20'>Pokémon Team for fight in the Battle Tower</h1>
-            <FormComponent errors={errors} data={data} isValid={isValid} handleSubmit={handleSubmit} onSubmit={onSubmit} register={register} />
+            <FormComponent 
+                errors={errors}  
+                isValid={isValid} 
+                handleSubmit={handleSubmit} 
+                onSubmit={onSubmit} 
+                register={register} 
+                control={control}
+            />
+            <Modal isOpen={isOpen} onClose={() => setIsOpen(!isOpen)} title="Modal Title">
+                <ModalMembersComponent searchParams={searchParams} />
+            </Modal>
         </div>
     )
 }
