@@ -1,40 +1,23 @@
 import { InfiniteData, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { fetchPokemons, fetchSearchPokemon } from "../api"
-import { PokeResultsInterface, UseChoosePokemonInterface, UseFiltredPokemons, UsePokemonsPropsInterface, UseSelectOnClickInterface } from "../types/types"
+import { FormSubmitProps, OnSubmitInterface, PokeResultsInterface, UseChoosePokemonInterface, UseFiltredPokemons, UsePokemonsPropsInterface, UseSelectOnClickInterface } from "../types/types"
 import { useSearchParams } from "react-router-dom"
 import { useCallback, useMemo } from "react"
 
-export const usePokemons = ({offset}: UsePokemonsPropsInterface) => {
-    // return useQuery({
-    //     queryKey: ['pokemons', offset],
-    //     queryFn: () => fetchPokemons({ offset }),
-    // })
+export const usePokemons = () => {
     return useInfiniteQuery({
         queryKey: ['pokemons'],
-        queryFn: () => fetchPokemons({ offset }),
+        queryFn: ({ pageParam = 0 }) => fetchPokemons({ offset: pageParam }),
         initialPageParam: 0,
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
             if (lastPage.length === 0) {
                 return undefined;
             }
             return lastPageParam + 20
-        }
+        },
+        enabled: true
     })
 }
-
-// export const usePokemonsAll = ({offset}: UsePokemonsPropsInterface) => {
-//     return useInfiniteQuery({
-//         queryKey: ['pokemons'],
-//         queryFn: () => fetchPokemons({ offset }),
-//         initialPageParam: 0,
-//         getNextPageParam: (lastPage, allPages, lastPageParam) => {
-//             if (lastPage.length === 0) {
-//                 return undefined;
-//             }
-//             return lastPageParam + 20
-//         }
-//     })
-// }
 
 export const useSearchQuery = (name: string) => {
     return useQuery({
@@ -78,4 +61,18 @@ export const useSelectOnClick = ({setIsOpen, isOpen, setDebounceValue}: UseSelec
         setIsOpen(!isOpen);
         setDebounceValue('');
     }, [setIsOpen, isOpen, setDebounceValue]);
+}
+
+export const onSubmitForm = ({updateParams, setIsOpen, isOpen}: OnSubmitInterface) => {
+    return useCallback((data: FormSubmitProps) => {
+        updateParams({
+            firstName: data.firstName,
+            lastName: data.lastName,
+            Member1: data.Member1,
+            Member2: data.Member2,
+            Member3: data.Member3,
+            Member4: data.Member4
+        });
+        setIsOpen(!isOpen)
+    }, [updateParams, setIsOpen, isOpen])
 }

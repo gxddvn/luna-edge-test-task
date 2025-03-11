@@ -2,7 +2,7 @@ import React from 'react'
 import Select from '../Select'
 import { SelectsPropsInterface } from '../../types/types'
 
-const Selects = React.memo(({data, control, errors, setCountOffset, offset}: SelectsPropsInterface) => {
+const Selects = React.memo(({data, control, errors, fetchNextPage}: SelectsPropsInterface) => {
     return (
         <div className='flex justify-between items-start my-4'>
             {data && ['Member1', 'Member2', 'Member3', 'Member4'].map((name, index) => (
@@ -14,8 +14,7 @@ const Selects = React.memo(({data, control, errors, setCountOffset, offset}: Sel
                     control={control} 
                     error={errors[name as "Member1" | "Member2" | "Member3" | "Member4" | "firstName" | "lastName"]}
                     size='sm'
-                    setCountOffset={setCountOffset}
-                    offset={offset}
+                    fetchNextPage={fetchNextPage}
                 />
             ))}
         </div>

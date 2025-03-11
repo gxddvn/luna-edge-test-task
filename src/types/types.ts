@@ -1,4 +1,4 @@
-import { InfiniteData } from "@tanstack/react-query";
+import { FetchNextPageOptions, InfiniteData, InfiniteQueryObserverResult } from "@tanstack/react-query";
 import { Control, FieldError, FieldErrors, UseFormHandleSubmit, UseFormRegister, UseFormRegisterReturn } from "react-hook-form";
 import { DebouncedState } from "usehooks-ts";
 
@@ -74,8 +74,7 @@ export interface SelectPropsInterface {
     disabled?: boolean | undefined;
     error?: FieldError | boolean | undefined;
     selectValue?: string
-    setCountOffset: React.Dispatch<React.SetStateAction<number>>
-    offset: number
+    fetchNextPage: (options?: FetchNextPageOptions) => Promise<InfiniteQueryObserverResult<InfiniteData<PokeResultsInterface[] | [], unknown>, Error>>
 }
 
 export interface UseFiltredPokemons {
@@ -87,8 +86,7 @@ export interface DropDownMenuPropsInterface {
     pokemons: PokeResultsInterface[] | undefined;
     choosePokemon: (pokemon: string) => void;
     setDebounceValue:  DebouncedState<(value: string) => void>;
-    setCountOffset: React.Dispatch<React.SetStateAction<number>>
-    offset: number;
+    fetchNextPage: (options?: FetchNextPageOptions) => Promise<InfiniteQueryObserverResult<InfiniteData<PokeResultsInterface[] | [], unknown>, Error>>
 }
 
 export interface DropDownMenuItemPropsInterface {
@@ -100,8 +98,7 @@ export interface SelectsPropsInterface {
     data: InfiniteData<PokeResultsInterface[] | [], unknown> | undefined
     control: Control<DefaultUseFormValues, any>;
     errors: FieldErrors<DefaultUseFormValues>;
-    setCountOffset: React.Dispatch<React.SetStateAction<number>>
-    offset: number
+    fetchNextPage: (options?: FetchNextPageOptions) => Promise<InfiniteQueryObserverResult<InfiniteData<PokeResultsInterface[] | [], unknown>, Error>>
 }
 
 export interface FetchSearchPokemonReqInterface {
@@ -121,12 +118,10 @@ export interface DefaultUseFormValues {
 }
 
 export interface FormPropsInterface {
-  errors: FieldErrors<DefaultUseFormValues>;
-  isValid: boolean;
-  handleSubmit: UseFormHandleSubmit<DefaultUseFormValues, undefined>;
-  onSubmit: (data: FormSubmitProps) => void;
-  register: UseFormRegister<DefaultUseFormValues>;
-  control: Control<DefaultUseFormValues, any>;
+  updateParams: (newValues: Record<string, string>) => void; 
+  searchParams: URLSearchParams;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>; 
+  isOpen: boolean;
 }
 
 export interface UseChoosePokemonInterface {
@@ -526,4 +521,10 @@ export interface BadgePropsInterface {
     firstIcon?: string | undefined;
     lastIcon?: string | undefined;
     backgroundColor?: string
+}
+
+export interface OnSubmitInterface {
+  updateParams: (newValues: Record<string, string>) => void; 
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>; 
+  isOpen: boolean;
 }

@@ -18,8 +18,7 @@ const Select = ({
     disabled, 
     selectValue, 
     error, 
-    setCountOffset, 
-    offset,
+    fetchNextPage
 }: SelectPropsInterface) => {
     const [isOpen, setIsOpen] = useState(false)
     const [isError, setIsError] = useState(false)
@@ -32,24 +31,13 @@ const Select = ({
         }, 
     }) : { field: { value: "", onChange: () => {} } };
     const choosePokemon = useChoosePokemon({setValue: onChange, setIsOpen});
-    const filtredPokemons = useFiltredPokemons({pokemons, debouncedValue});
+    // const filtredPokemons = useFiltredPokemons({pokemons, debouncedValue});
     const selectOnClick = useSelectOnClick({setIsOpen, isOpen, setDebounceValue});
     useEffect(() => {
         if (value) {
             setIsError(false)
         }
     }, [value])
-
-    // useEffect(() => {
-    //     if (pokemons) {
-    //         prevData.current = [
-    //             ...prevData.current,
-    //             ...pokemons.filter(item => 
-    //                 !prevData.current.some(existingItem => existingItem.name === item.name)
-    //             )
-    //         ];
-    //     }
-    // }, [pokemons, prevData]);
     
     return (
         <div className='relative inline-block text-left mx-2 rounded-md'>
@@ -75,11 +63,10 @@ const Select = ({
             {isError && <span className='text-xs text-red-500 mt-2'>Please choose a pokemon</span>}
             {isOpen && (
                 <DropDownMenu 
-                    pokemons={filtredPokemons} 
+                    pokemons={pokemons?.pages.flat() || []} 
                     choosePokemon={choosePokemon} 
                     setDebounceValue={setDebounceValue} 
-                    setCountOffset={setCountOffset} 
-                    offset={offset} 
+                    fetchNextPage={fetchNextPage}
                 />
             )}
         </div>
