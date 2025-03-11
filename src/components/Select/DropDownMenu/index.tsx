@@ -1,29 +1,54 @@
 import React, { useEffect, useRef, useCallback} from "react";
 import { DropDownMenuPropsInterface } from "../../../types/types";
 import DropDownMenuItem from "./DropDownMenuItem";
+import { useInView } from "react-intersection-observer";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { fetchPokemons } from "../../../api";
 
 const DropDownMenu = React.memo(({ pokemons, choosePokemon, setDebounceValue, setCountOffset, offset }: DropDownMenuPropsInterface) => {
-    const observerRef = useRef<HTMLDivElement | null>(null);
-    const observer = useRef<IntersectionObserver | null>(null);
-    
-    const handleIntersect = useCallback(
-        (entries: IntersectionObserverEntry[]) => {
-            if (entries[0].isIntersecting) {
-                setCountOffset((prevOffset) => prevOffset + 20);
+    // const observerRef = useRef<HTMLDivElement | null>(null);
+    // const observer = useRef<IntersectionObserver | null>(null);
+
+    const { ref, inView, entry } = useInView();
+
+    const { data, fetchNextPage } = useInfiniteQuery({
+        queryKey: ['pokemons'],
+        queryFn: () => fetchPokemons({ offset }),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages, lastPageParam) => {
+            if (lastPage.length === 0) {
+                return undefined;
             }
+            return lastPageParam + 20
         },
-        [setCountOffset]
-    );
+        enabled: !!offset
+    })
 
     useEffect(() => {
-        if (!observerRef.current) return;
+        console.log("gg")
+        if (entry && inView) {
+            fetchNextPage()
+        }
+    }, [entry])
+    
+    // const handleIntersect = useCallback(
+    //     (entries: IntersectionObserverEntry[]) => {
+    //         if (entries[0].isIntersecting) {
+    //             setCountOffset((prevOffset) => prevOffset + 20);
+    //         }
+    //     },
+    //     [setCountOffset]
+    // );
 
-        observer.current = new IntersectionObserver(handleIntersect, { threshold: 1.0 });
-        observer.current.observe(observerRef.current);
+    // useEffect(() => {
+    //     if (!observerRef.current) return;
 
-        return () => observer.current?.disconnect();
-    }, [handleIntersect]);
+    //     observer.current = new IntersectionObserver(handleIntersect, { threshold: 1.0 });
+    //     observer.current.observe(observerRef.current);
 
+    //     return () => observer.current?.disconnect();
+    // }, [handleIntersect]);
+    console.log(data)
     return (
         <div className="absolute w-auto max-w-max bg-white border border-gray-300 mt-1 rounded-md shadow-lg z-10">
             <input
@@ -33,10 +58,10 @@ const DropDownMenu = React.memo(({ pokemons, choosePokemon, setDebounceValue, se
                 className="w-full px-4 py-2 border-b border-gray-200 outline-none"
             />
             <ul className="bg-slate-50 p-2 max-h-48 overflow-y-auto">
-                {pokemons?.map((item) => (
+                {data?.pages?.flatMap(page => page).map((item) => (
                     <DropDownMenuItem key={item?.name} name={item?.name} choosePokemon={choosePokemon} />
                 ))}
-                <div ref={observerRef} className="h-5" />
+                <div ref={ref} className="h-5" />
             </ul>
         </div>
     );

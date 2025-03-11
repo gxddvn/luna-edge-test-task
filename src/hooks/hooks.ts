@@ -1,15 +1,40 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query"
+import { InfiniteData, useInfiniteQuery, useQuery } from "@tanstack/react-query"
 import { fetchPokemons, fetchSearchPokemon } from "../api"
-import { UseChoosePokemonInterface, UseFiltredPokemons, UsePokemonsPropsInterface, UseSelectOnClickInterface } from "../types/types"
+import { PokeResultsInterface, UseChoosePokemonInterface, UseFiltredPokemons, UsePokemonsPropsInterface, UseSelectOnClickInterface } from "../types/types"
 import { useSearchParams } from "react-router-dom"
 import { useCallback, useMemo } from "react"
 
 export const usePokemons = ({offset}: UsePokemonsPropsInterface) => {
-    return useQuery({
-        queryKey: ['pokemons', offset],
+    // return useQuery({
+    //     queryKey: ['pokemons', offset],
+    //     queryFn: () => fetchPokemons({ offset }),
+    // })
+    return useInfiniteQuery({
+        queryKey: ['pokemons'],
         queryFn: () => fetchPokemons({ offset }),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, allPages, lastPageParam) => {
+            if (lastPage.length === 0) {
+                return undefined;
+            }
+            return lastPageParam + 20
+        }
     })
 }
+
+// export const usePokemonsAll = ({offset}: UsePokemonsPropsInterface) => {
+//     return useInfiniteQuery({
+//         queryKey: ['pokemons'],
+//         queryFn: () => fetchPokemons({ offset }),
+//         initialPageParam: 0,
+//         getNextPageParam: (lastPage, allPages, lastPageParam) => {
+//             if (lastPage.length === 0) {
+//                 return undefined;
+//             }
+//             return lastPageParam + 20
+//         }
+//     })
+// }
 
 export const useSearchQuery = (name: string) => {
     return useQuery({
@@ -32,16 +57,12 @@ export const useFilterParams = () => {
     return { searchParams, updateParams };
 };
 
-export const useFiltredPokemons = ({pokemons, debouncedValue, prevData}: UseFiltredPokemons) => {
+export const useFiltredPokemons = ({pokemons, debouncedValue}: UseFiltredPokemons): PokeResultsInterface[] | undefined => {
     return useMemo(() => {
-        if (debouncedValue) {
-            return debouncedValue
-                ? pokemons?.filter((item) => item.name.toLowerCase().includes(debouncedValue.toLowerCase()))
-                : pokemons;
-        }
-        else {
-            return prevData.current
-        }
+        const allPokemons = pokemons?.pages.flat();
+        return debouncedValue
+            ? allPokemons?.filter((item) => item.name.toLowerCase().includes(debouncedValue.toLowerCase()))
+            : allPokemons;
     }, [debouncedValue, pokemons]);
 }
 
