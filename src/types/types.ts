@@ -99,6 +99,8 @@ export interface SelectsPropsInterface {
     control: Control<DefaultUseFormValues, any>;
     errors: FieldErrors<DefaultUseFormValues>;
     fetchNextPage: (options?: FetchNextPageOptions) => Promise<InfiniteQueryObserverResult<InfiniteData<PokeResultsInterface[] | [], unknown>, Error>>
+    isLoading: boolean;
+    isError: boolean;
 }
 
 export interface FetchSearchPokemonReqInterface {

@@ -1,6 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { FormSubmitProps, PokeResultsInterface } from '../types/types';
+import { useState } from 'react'
 import { useFilterParams } from '../hooks/hooks';
 import FormComponent from '../components/FormComponent';
 import Modal from '../components/Modal';

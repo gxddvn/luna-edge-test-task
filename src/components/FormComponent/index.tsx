@@ -41,7 +41,7 @@ const FormComponent = React.memo(({updateParams, searchParams, setIsOpen, isOpen
                 error={errors.lastName} 
                 register={register('lastName', { required: true, minLength: 2, maxLength: 12, pattern: /^[A-Za-z]+$/i  })}
             />
-            <Selects data={data} control={control} errors={errors} fetchNextPage={fetchNextPage}/>
+            <Selects data={data} control={control} errors={errors} fetchNextPage={fetchNextPage} isLoading={isLoading} isError={isError}/>
             <div className='flex items-center justify-end mt-8'>
                 <Button type="submit" label="Submit" disabled={!isValid}/>
             </div>
