@@ -31,7 +31,7 @@ const Select = ({
         }, 
     }) : { field: { value: "", onChange: () => {} } };
     const choosePokemon = useChoosePokemon({setValue: onChange, setIsOpen});
-    // const filtredPokemons = useFiltredPokemons({pokemons, debouncedValue});
+    const filtredPokemons = useFiltredPokemons({pokemons, debouncedValue});
     const selectOnClick = useSelectOnClick({setIsOpen, isOpen, setDebounceValue});
     useEffect(() => {
         if (value) {
@@ -63,7 +63,7 @@ const Select = ({
             {isError && <span className='text-xs text-red-500 mt-2'>Please choose a pokemon</span>}
             {isOpen && (
                 <DropDownMenu 
-                    pokemons={pokemons?.pages.flat() || []} 
+                    pokemons={filtredPokemons}
                     choosePokemon={choosePokemon} 
                     setDebounceValue={setDebounceValue} 
                     fetchNextPage={fetchNextPage}

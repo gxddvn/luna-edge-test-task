@@ -23,6 +23,7 @@ export const useSearchQuery = (name: string) => {
     return useQuery({
         queryKey: ['pokemon', name],
         queryFn: () => fetchSearchPokemon({name}),
+        enabled: !!name
     })
 }
 

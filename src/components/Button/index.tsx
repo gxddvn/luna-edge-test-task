@@ -56,7 +56,7 @@ const Button = ({
             {...props}
         >
             {firstIcon && <Icons type={firstIcon} className="w-5 h-5 mx-1" />}
-            {value ? value : label}
+            <span>{value ? value : label}</span>
             <div className='flex items-center'>
                 {value && onChange && <span onClick={onClickButton}><Icons type={"close"} className="w-5 h-5" /></span>}
                 {lastIcon && <Icons type={lastIcon} className="w-5 h-5" />}

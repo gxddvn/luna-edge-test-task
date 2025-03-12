@@ -8,13 +8,11 @@ const DropDownMenu = React.memo(({ pokemons, choosePokemon, setDebounceValue, fe
     const { ref, inView, entry } = useInView();
 
     useEffect(() => {
-        console.log("gg")
         if (entry && inView) {
             fetchNextPage()
         }
     }, [entry])
     
-    console.log(pokemons)
     return (
         <div className="absolute w-auto max-w-max bg-white border border-gray-300 mt-1 rounded-md shadow-lg z-10">
             <input
